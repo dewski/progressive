@@ -9,11 +9,11 @@ Second, most other implementations rely on class level attributes and make it
 difficult for inheritance and the rare case when a subject will need to have
 _multiple_ states.
 
-Progressive centralizes the logic for model code to a single State model
-which all entities access their state through.
+If you only need to have 1 state for a model, Progressive works fine for that too.
 
-Future plans will be to make it possible to states and events persisted in the
-database that way they can be customized and modified.
+Progressive interacts with the states and events for a model at an instance level,
+not class level. There are no magic methods defined based on your states or events
+it relies on method missing so it's very interoperable.
 
 ## Installation
 
@@ -43,7 +43,7 @@ class User < ActiveRecord::Base
 
   has_many :states, :as => :subject, :dependent => :destroy
 
-  states :default => :pending do
+  states do
     state :pending do
       event :potential
     end
@@ -82,10 +82,11 @@ actor = User.first
 user = User.first
 
 state = user.states.first
-state.state # => pending
+state.state # => 'pending'
+state.default_state # => :pending
 state.to(:archived, :actor => actor) # => false
 state.to(:potential, :actor => actor) # => true
-state.state # => potential
+state.state # => 'potential'
 state.specification # => Progressive::Specification
 state.current_state # => Progressive::Specification::State
 ```
