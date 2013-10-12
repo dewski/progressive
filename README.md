@@ -91,6 +91,53 @@ state.specification # => Progressive::Specification
 state.current_state # => Progressive::Specification::State
 ```
 
+### Short circuiting an event
+
+Since Progressive uses the same ActiveModel callbacks you're familiar with in
+your ActiveRecord models, you can short circuit the event just by returning
+a falsey statement within each callback.
+
+You can add a before or after callback for any event. To see which events you
+have available just check the Progressive specification:
+
+```ruby
+Video.specification.event_names # => [:converting, :publish]
+```
+
+Example:
+
+```ruby
+class Video < ActiveRecord::Base
+  include Progression::Subject
+
+  has_one :state, :as => :subject, :dependent => :destroy
+
+  states do
+    state :pending do
+      event :converting
+    end
+
+    state :converting do
+      event :publish => :published
+    end
+
+    state :published
+  end
+
+  before_converting :valid_file_size?
+
+  def valid_file_size?
+    file_size < 1.gigabyte
+  end
+end
+
+video = Video.first
+video.file_size # => 2.gigabytes
+video.state # => :pending
+video.converting # => false
+video.state # => :pending
+```
+
 ## Maintainers
 
 - [@dewski](/dewski)
