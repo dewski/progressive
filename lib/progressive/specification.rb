@@ -4,7 +4,7 @@ module Progressive
       attr_reader :events
 
       def initialize(&block)
-        @events = {}
+        @events = ActiveSupport::HashWithIndifferentAccess.new
         return unless block.present?
         instance_eval(&block)
       end
@@ -25,7 +25,7 @@ module Progressive
       #
       # Returns true if event exists, false if not.
       def event?(state)
-        @events.key?(state.to_sym)
+        @events.key?(state)
       end
     end
 
@@ -54,7 +54,7 @@ module Progressive
       raise MissingConfiguration if block.nil?
 
       @options = options
-      @states = {}
+      @states = ActiveSupport::HashWithIndifferentAccess.new
 
       instance_eval(&block)
     end
@@ -65,7 +65,7 @@ module Progressive
     #
     # Returns true if exists, false if not.
     def event?(event)
-      event_names.include?(event.to_sym)
+      event_names.include?(event.to_s)
     end
 
     # Public: All possible events that can be applied to the subject. Doesn't
@@ -95,7 +95,7 @@ module Progressive
     #
     # Returns true if defined, false if not.
     def state?(state)
-      @states.key?(state.to_sym)
+      @states.key?(state)
     end
 
     # Public: Returns the default state for the specification.
@@ -104,7 +104,7 @@ module Progressive
     def default_state
       @default_state ||=
         if options.key?(:default)
-          options[:default]
+          options[:default].to_s
         elsif states.any?
           states.keys.first
         end

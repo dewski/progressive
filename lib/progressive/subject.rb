@@ -7,9 +7,9 @@ module Progressive
     include ActiveModel::Callbacks
 
     included do
-      class_attribute :specification
-
       define_model_callbacks :progress, only: [:before, :after]
+
+      attr_accessor :event_context
     end
 
     module ClassMethods
@@ -25,22 +25,18 @@ module Progressive
         self.specification = Specification.new(options, &block)
         define_model_callbacks(*specification.event_names, only: [:before, :after])
       end
-    end
 
-    def method_missing(method_sym, *args, &block)
-      if method_sym.to_s[-1] == '?' && specification.state?(method_sym.to_s[0..-2])
-        specification.send(method_sym)
-      else
-        super
+      def specification=(specification)
+        Progressive.specifications[name] = specification
+      end
+
+      def specification
+        Progressive.specifications[name]
       end
     end
 
     def specification
       self.class.specification
-    end
-
-    def human_state
-      state.humanize
     end
   end
 end
