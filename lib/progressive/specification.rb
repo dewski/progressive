@@ -5,10 +5,8 @@ module Progressive
 
       def initialize(&block)
         @events = {}
-
-        if block.present?
-          instance_eval(&block)
-        end
+        return unless block.present?
+        instance_eval(&block)
       end
 
       # Public: Defines events
@@ -76,9 +74,9 @@ module Progressive
     #
     # Returns Array of Symbols.
     def event_names
-      @event_names ||= @states.collect { |_, state|
+      @event_names ||= @states.collect do |_, state|
         state.events.keys
-      }.flatten.uniq
+      end.flatten.uniq
     end
 
     # Public: Defines states
@@ -104,11 +102,12 @@ module Progressive
     #
     # Returns symbol.
     def default_state
-      @default_state ||= if options.key?(:default)
-        options[:default]
-      elsif states.any?
-        states.keys.first
-      end
+      @default_state ||=
+        if options.key?(:default)
+          options[:default]
+        elsif states.any?
+          states.keys.first
+        end
     end
   end
 end

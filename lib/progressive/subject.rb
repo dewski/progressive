@@ -9,7 +9,7 @@ module Progressive
     included do
       class_attribute :specification
 
-      define_model_callbacks :progress, :only => [:before, :after]
+      define_model_callbacks :progress, only: [:before, :after]
     end
 
     module ClassMethods
@@ -23,7 +23,7 @@ module Progressive
       # Returns Progression::Specification
       def states(options = {}, &block)
         self.specification = Specification.new(options, &block)
-        define_model_callbacks(*self.specification.event_names, :only => [:before, :after])
+        define_model_callbacks(*specification.event_names, only: [:before, :after])
       end
     end
 

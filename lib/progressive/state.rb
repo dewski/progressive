@@ -1,10 +1,10 @@
 module Progressive
   class State < ActiveRecord::Base
-    belongs_to :subject, :polymorphic => true
+    belongs_to :subject, polymorphic: true
 
-    validates :subject_type, :presence => true
-    validates :subject_id, :presence => true, :uniqueness => { :scope => [:subject_type] }
-    validates :state, :presence => true
+    validates :subject_type, presence: true
+    validates :subject_id, presence: true, uniqueness: { scope: [:subject_type] }
+    validates :state, presence: true
 
     def specification
       @specification ||= subject.specification
@@ -43,6 +43,6 @@ module Progressive
     def to_s
       state
     end
-    delegate :humanize, :to => :to_s
+    delegate :humanize, to: :to_s
   end
 end
