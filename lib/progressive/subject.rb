@@ -29,7 +29,7 @@ module Progressive
 
     def method_missing(method_sym, *args, &block)
       if method_sym.to_s[-1] == '?' && specification.state?(method_sym.to_s[0..-2])
-        state.send(method_sym)
+        specification.send(method_sym)
       else
         super
       end
