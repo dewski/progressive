@@ -51,6 +51,7 @@ module Progressive
     # Returns nothing.
     def to(event, options = {})
       return false unless current_state.event?(event)
+      new_record = !!options.delete(:new_record) || subject.new_state_record_on_change?
 
       current_event = current_state.events[event]
 
@@ -62,7 +63,17 @@ module Progressive
 
       subject.run_callbacks(:progress) do
         subject.run_callbacks(current_event.name) do
-          update_attribute(:state, current_event.to)
+          if new_record
+            record = dup
+            record.state = current_event.to
+            if record.save
+              record
+            else
+              false
+            end
+          else
+            update_attribute(:state, current_event.to)
+          end
         end
       end
     ensure

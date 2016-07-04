@@ -6,12 +6,6 @@ module Progressive
     extend ActiveSupport::Concern
     include ActiveModel::Callbacks
 
-    included do
-      define_model_callbacks :progress, only: [:before, :after]
-
-      attr_accessor :event_context
-    end
-
     module ClassMethods
       # Public: Define the different states and events the subject can go through.
       #
@@ -35,8 +29,21 @@ module Progressive
       end
     end
 
+    included do
+      define_model_callbacks :progress, only: [:before, :after]
+
+      attr_accessor :event_context
+
+      class_attribute :new_state_record_on_change
+      self.new_state_record_on_change = false
+    end
+
     def specification
       self.class.specification
+    end
+
+    def new_state_record_on_change?
+      !!self.class.new_state_record_on_change
     end
   end
 end
