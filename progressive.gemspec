@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = Progressive::VERSION
   spec.authors       = ['dewski']
   spec.email         = ['me@garrettbjerkhoel.com']
-  spec.description   = %q{TODO: Write a gem description}
-  spec.summary       = %q{TODO: Write a gem summary}
+  spec.description   = 'A lightweight ActiveModel backed state machine.'
+  spec.summary       = 'A lightweight ActiveModel backed state machine.'
   spec.homepage      = 'https://github.com/dewski/progressive'
   spec.license       = 'MIT'
 
